@@ -35,7 +35,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *      "order": {"sentAt": "desc"}
  *  },
  *  normalizationContext={"groups"={"invoices_read"}},
- * denormalizationContext={"disable_type_enforcement"=true}
+ *  denormalizationContext={"disable_type_enforcement"=true}
  * )
  * @ApiFilter(OrderFilter::class, properties={"amount", "sentAt"})
  */
