@@ -2,15 +2,16 @@
 
 namespace App\Doctrine;
 
+use App\Entity\User;
+use App\Entity\Invoice;
+use App\Entity\Customer;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
-use App\Entity\Customer;
-use App\Entity\Invoice;
-use Proxies\__CG__\App\Entity\User;
+//use Proxies\__CG__\App\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 
 class CurrentUserExtention implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -27,6 +28,7 @@ class CurrentUserExtention implements QueryCollectionExtensionInterface, QueryIt
     {
         // 1. Obtenir l'utilisateur connecté
         $user = $this->security->getUser();
+        //dd($user);
 
         // 2. Si on demande des invoices ou des customers, agir sur la requet pour quelle tienne compte l'utilisateur connecté
         if(
@@ -35,6 +37,7 @@ class CurrentUserExtention implements QueryCollectionExtensionInterface, QueryIt
             !$this->auth->isGranted('ROLE_ADMIN') 
             && 
             $user instanceof User
+            
         ){
             // SELECT o FROM \App\Entity\Invoice As o
             // WHERE o... 
@@ -44,7 +47,7 @@ class CurrentUserExtention implements QueryCollectionExtensionInterface, QueryIt
 
             if($resourceClass === Customer::class){
                 $queryBuilder->andWhere("$rootAlias.user = :user");                 
-            } elseif($resourceClass === Invoice::class) {
+            } else if ($resourceClass === Invoice::class) {
                 $queryBuilder->join("$rootAlias.customer", "c")
                             ->andWhere("c.user = :user");
             }
