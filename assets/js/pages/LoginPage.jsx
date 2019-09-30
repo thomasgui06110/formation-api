@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
 import AuthAPI from "../services/authAPI";
 import AuthContext from "../contexts/AuthContext";
+import Field from "../components/forms/Field";
 
 const LoginPage = ({ history }) => {
-    const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   const [credentials, setCredentials] = useState({
     username: "",
@@ -44,31 +45,24 @@ const LoginPage = ({ history }) => {
       <h1>Connexion à l'application</h1>
 
       <form onSubmit={handelSubmit}>
-        <div className="form-group">
-          <label htmlFor="username">Adresse Email</label>
-          <input
-            value={credentials.username}
-            onChange={handelChange}
-            type="email"
-            placeholder="Adresse mail de connexion"
-            name="username"
-            id="username"
-            className={"form-control" + (error && " is-invalid")}
-          />
-          {error && <p className="invalid-feedback">{error}</p>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Mot de passe</label>
-          <input
-            value={credentials.password}
-            onChange={handelChange}
-            type="password"
-            className="form-control"
-            placeholder="Mot de passe"
-            name="password"
-            id="password"
-          />
-        </div>
+        <Field
+          label="Adresse email"
+          name="username"
+          value={credentials.username}
+          onChange={handelChange}
+          placeholder="Adresse email de connexion"
+          error={error}
+        />
+
+        <Field
+          label="Mot de passe"
+          name="password"
+          value={credentials.password}
+          onChange={handelChange}
+          type="password"
+          id="password"
+        />
+
         <div className="form-group">
           <button className="btn btn-success">Je me connecte !</button>
         </div>
