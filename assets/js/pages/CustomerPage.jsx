@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Field from "../components/forms/Field";
 import { Link } from "react-router-dom";
-import CustomersAPI from "../services/customersAPI";
+
 import customersAPI from "../services/customersAPI";
 
 import { toast } from "react-toastify";
@@ -30,7 +30,7 @@ const CustomerPage = ({ match, history }) => {
 
   const fetchCustomer = async id => {
     try {
-      const { firstName, lastName, email, compagny } = await CustomersAPI.find(
+      const { firstName, lastName, email, compagny } = await customersAPI.find(
         id
       );
       //console.log(data);
@@ -65,18 +65,19 @@ const CustomerPage = ({ match, history }) => {
     try {
       if (editing) {
         await customersAPI.update(id, customer);
-        toast.success("Le client a bieb été modifié ")
+        toast.success("Le client a bien été modifié ")
+
       } else {
-        await customersAPI.create(customer);
+       await customersAPI.create(customer);
         toast.success("Le client a bieb été créé")
         history.replace("/customers");
+        
       }
       setErrors({});
-      //console.log(response.data);
     } catch ({ response }) {
-      const { violation } = response.data;
+      const { violations } = response.data;
 
-      if (violation) {
+      if (violations) {
         const apiErrors = {};
         violations.forEach(({ propertyPath, message }) => {
           apiErrors[propertyPath] = message;
