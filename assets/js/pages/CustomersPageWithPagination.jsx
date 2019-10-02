@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Pagination from "../components/Pagination";
+import { toast } from "react-toastify";
 
 const CustomersPageWithPagination = props => {
   const [customers, setCustomers] = useState([]);

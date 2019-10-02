@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import Pagination from "../components/Pagination";
 import CustomersAPI from "../services/customersAPI";
-import { async } from "q";
+import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import TableLoader from "../components/loaders/TableLoader";
 
 const CustomersPage = props => {
   const [customers, setCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Permet d'aller récupérer les customers
   const fetchCustomers = async () => {
     try {
       const data = await CustomersAPI.findAll();
       setCustomers(data);
+      setLoading(false);
     } catch {
-      console.log(error.response);
+      toast.error("Impossible de charger les clients ");
     }
   };
 
@@ -32,9 +35,10 @@ const CustomersPage = props => {
 
     try {
       await CustomersAPI.delete(id);
+      toast.success("Le client a bien été supprimé 🙂");
     } catch (error) {
+      toast.error("Erreur  lors de la suppression du client");
       setCustomers(originalCustmers);
-      o;
     }
   };
 
@@ -73,7 +77,9 @@ const CustomersPage = props => {
     <>
       <div className="mb-3 d-flex justify-content-between align-items-center">
         <h1>Liste des Clients</h1>
-        <Link to="/customers/new" className="btn btn-primary">Créer un client</Link>
+        <Link to="/customers/new" className="btn btn-primary">
+          Créer un client
+        </Link>
       </div>
 
       <div className="form-group">
@@ -98,38 +104,41 @@ const CustomersPage = props => {
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          {paginetedCustomers.map(customer => (
-            <tr key={customer.id}>
-              <td>{customer.id}</td>
-              <td>
-                <a href="#">
-                  {customer.firstName} {customer.lastName}
-                </a>
-              </td>
-              <td>{customer.email}</td>
-              <td>{customer.compagny}</td>
-              <td className="text-center">
-                <span className="badge badge-primary">
-                  {customer.invoices.length}
-                </span>
-              </td>
-              <td className="text-right">
-                {customer.totalAmount.toFixed(2).toLocaleString()} €
-              </td>
-              <td>
-                <button
-                  onClick={() => handelDelete(customer.id)}
-                  disabled={customer.invoices.length > 0}
-                  className="btn btn-sm btn-danger"
-                >
-                  Supprimer
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+        {!loading && (
+          <tbody>
+            {paginetedCustomers.map(customer => (
+              <tr key={customer.id}>
+                <td>{customer.id}</td>
+                <td>
+                  <Link to={"/customers/" + customer.id }>
+                    {customer.firstName} {customer.lastName}
+                  </Link>
+                </td>
+                <td>{customer.email}</td>
+                <td>{customer.compagny}</td>
+                <td className="text-center">
+                  <span className="badge badge-primary">
+                    {customer.invoices.length}
+                  </span>
+                </td>
+                <td className="text-right">
+                  {customer.totalAmount.toFixed(2).toLocaleString()} €
+                </td>
+                <td>
+                  <button
+                    onClick={() => handelDelete(customer.id)}
+                    disabled={customer.invoices.length > 0}
+                    className="btn btn-sm btn-danger"
+                  >
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        )}
       </table>
+      {loading && <TableLoader />}
       {itemsPerPage < filteredCustomers.length && (
         <Pagination
           currentPage={currentPage}

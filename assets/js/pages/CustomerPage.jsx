@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import CustomersAPI from "../services/customersAPI";
 import customersAPI from "../services/customersAPI";
 
+import { toast } from "react-toastify";
+
 const CustomerPage = ({ match, history }) => {
   const { id = "new" } = match.params;
 
@@ -63,10 +65,10 @@ const CustomerPage = ({ match, history }) => {
     try {
       if (editing) {
         await customersAPI.update(id, customer);
-        // console.log(response.data);
+        toast.success("Le client a bieb été modifié ")
       } else {
         await customersAPI.create(customer);
-        // TODO flash notification de success
+        toast.success("Le client a bieb été créé")
         history.replace("/customers");
       }
       setErrors({});
